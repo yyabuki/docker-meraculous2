@@ -1,14 +1,14 @@
 FROM debian:jessie
 
 MAINTAINER Yukimitsu Yabuki, yukimitsu.yabuki@gmail.com
-# We modified an attached file (run) created by Eugene Goltsman.
+# A bit modified a Dockerfile and an attached file (run) created by Eugene Goltsman.
 
 RUN apt-get update -y
 RUN apt-get install -y g++ build-essential cmake perl gnuplot libboost-dev libboost-thread-dev wget
 RUN cpan -f Log::Log4perl
 
 RUN wget \
-  http://portal.nersc.gov/dna/plant/assembly/meraculous2/releases/release-2.0.3.1-docker.tgz \
+  http://portal.nersc.gov/dna/plant/assembly/meraculous2/releases/release-2.0.5-docker.tgz \
   --output-document /tmp/meraculous2.tar.gz \
   --quiet
 RUN mkdir -p /tmp/meraculous2/build
