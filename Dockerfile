@@ -1,10 +1,10 @@
 FROM debian:jessie
 
 MAINTAINER Yukimitsu Yabuki, yukimitsu.yabuki@gmail.com
-# A bit modified a Dockerfile and an attached file (run) created by Eugene Goltsman.
+# Modified a Dockerfile and an attached file (run) created by Eugene Goltsman.
 
 RUN apt-get update -y
-RUN apt-get install -y g++ build-essential cmake perl gnuplot libboost-dev libboost-thread-dev wget
+RUN apt-get install -y g++ build-essential cmake perl gnuplot libboost-dev libboost-thread-dev wget libboost-filesystem-dev
 RUN cpan -f Log::Log4perl
 
 RUN wget \
