@@ -1,0 +1,92 @@
+#!/bin/bash
+
+### run_merac_in_docker.sh ###
+### A wrapper script that calls meraculous.pl with three arguments,
+### as required by Michael Barton's assembler benchmarking project
+
+set -o errexit
+set -o nounset
+
+if [ $# -ne  3 ]
+then
+    echo "Usage: run.sh <proc_name> <input_fastq> <out_dir>"
+    exit 1
+fi
+
+
+# Process handle  (the first column in the Procfile)
+PROC=$1
+
+# Source reads in this container
+INPUTS=$2
+
+# Destination output directory
+DIR=$3
+mkdir -p $DIR
+
+# Set up logging
+LOG=$DIR/log.txt
+exec > ${LOG}
+exec 2>&1
+set -o xtrace
+
+
+# Destination contigs file
+ASSEMBLY=${DIR}/contigs.fa
+
+
+
+# Generate the config file for Meraculous incuding the path to the input reads
+#TMP=$(mktemp -d)
+TMP=${DIR}/tmp
+if [ ! -e ${TMP} ]; then
+    mkdir -p $TMP
+fi
+
+cat > ${TMP}/meraculous.config <<EOF
+lib_seq $INPUTS  LIB1 535 30  251  0 0  1 1 1  0 0
+fallback_on_est_insert_size 1
+genome_size        0.004
+num_prefix_blocks 8
+meraculous_min_depth_cutoff 100
+no_read_validation  1
+gap_close_aggressive 1
+gap_close_rpt_depth_ratio 3.0
+use_cluster 0
+local_num_procs  8
+
+EOF
+
+# add mersize parameter depending on the run type
+case $PROC in
+    k21*)
+        echo "meraculous_mer_size 21" >>  ${TMP}/meraculous.config
+        ;;
+    k31*)
+        echo "meraculous_mer_size 31" >>  ${TMP}/meraculous.config
+        ;;
+    k41*)
+        echo "meraculous_mer_size 41" >>  ${TMP}/meraculous.config
+        ;;
+esac
+
+
+# run the process
+CMD=$(egrep ^${PROC}: /Procfile | cut -f 2 -d ':')
+if [[ -z ${CMD} ]]; then
+    echo "Abort, no proc found for ${PROC}."
+exit 1
+fi
+eval $CMD
+
+if [ ! -e ${TMP}/meraculous_final_results ]; then 
+    mkdir ${TMP}/meraculous_final_results
+fi
+OUTPUT=${TMP}/meraculous_final_results/final.scaffolds.fa
+
+if [[ -z ${OUTPUT} ]]; then
+echo "Abort, no output found for process \'${PROC}\'."
+exit 1
+fi
+
+cp $OUTPUT $ASSEMBLY
