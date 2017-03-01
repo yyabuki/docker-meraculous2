@@ -48,7 +48,7 @@ lib_seq $INPUTS  LIB1 535 30  251  0 0  1 1 1  0 0
 fallback_on_est_insert_size 1
 genome_size        0.004
 num_prefix_blocks 8
-meraculous_min_depth_cutoff 100
+min_depth_cutoff 100
 no_read_validation  1
 gap_close_aggressive 1
 gap_close_rpt_depth_ratio 3.0
