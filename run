@@ -60,13 +60,13 @@ EOF
 # add mersize parameter depending on the run type
 case $PROC in
     k21*)
-        echo "meraculous_mer_size 21" >>  ${TMP}/meraculous.config
+        echo "mer_size 21" >>  ${TMP}/meraculous.config
         ;;
     k31*)
-        echo "meraculous_mer_size 31" >>  ${TMP}/meraculous.config
+        echo "mer_size 31" >>  ${TMP}/meraculous.config
         ;;
     k41*)
-        echo "meraculous_mer_size 41" >>  ${TMP}/meraculous.config
+        echo "mer_size 41" >>  ${TMP}/meraculous.config
         ;;
 esac
 
